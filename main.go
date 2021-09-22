@@ -8,10 +8,10 @@ import (
 	"github.com/sirupsen/logrus"
 	"os"
 	"path"
-	"strconv"
 )
 
 const (
+	versionEnv            = "BUILDBEN_VERSION"
 	indexFileName         = "index.json"
 	initFolderPathPart    = "init"
 	schemasFolderPathPart = "schemas"
@@ -19,13 +19,13 @@ const (
 )
 
 var (
-	orderArray          = []string{"types", "tables", "data", "views", "routines"}
-	scriptVersion int64 = 0
+	orderArray    = []string{"types", "tables", "data", "views", "routines"}
+	scriptVersion string
 )
 
 func main() {
 	outFileName := ""
-	outFileFlag, _ := parseFlags()
+	outFileFlag := parseFlags()
 	wd, err := os.Getwd()
 	if err != nil {
 		logrus.Panic(err)
@@ -42,12 +42,17 @@ func main() {
 		logrus.Panic(err)
 	}
 
-	scriptVersion = indexStruct.Version
+	versionFromEnv := os.Getenv(versionEnv)
+	if len(versionFromEnv) == 0 {
+		scriptVersion = indexStruct.Version
+	} else {
+		scriptVersion = versionFromEnv
+	}
 
 	if len(outFileFlag) > 0 {
 		outFileName = outFileFlag
 	} else {
-		outFileName = strconv.FormatInt(indexStruct.Version, 10) + defaultFileSuffix
+		outFileName = scriptVersion + defaultFileSuffix
 	}
 
 	f, err := os.Create(outFileName)
