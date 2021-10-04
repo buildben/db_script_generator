@@ -9,9 +9,11 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 )
 
 const (
+	githubRefEnv          = "GITHUB_REF"
 	versionEnv            = "DB_VERSION"
 	basePathEnv           = "DB_SOURCES_BASE_PATH"
 	indexFileName         = "index.json"
@@ -42,7 +44,8 @@ func main() {
 
 	versionFromEnv := os.Getenv(versionEnv)
 	if len(versionFromEnv) == 0 {
-		scriptVersion = indexStruct.Version
+		refParts := strings.Split(os.Getenv(githubRefEnv), "/")
+		scriptVersion = refParts[len(refParts)-1]
 	} else {
 		scriptVersion = versionFromEnv
 	}
