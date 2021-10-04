@@ -1,13 +1,18 @@
 # action.yml
-name: 'Buildben SQL Initial Script Generator Action'
+name: 'SQL Initial Script Generator Action'
 description: 'This action is needed to build pieces of SQL code into one initialization script'
 inputs:
-  buildben-version:
-    description: 'Buildben version for generating SQL script'
+  db-version:
+    description: 'Version for generating SQL script'
+    required: true
+    default: 'debug'
+  db-sources-base-path:
+    description: 'Sources for generating SQL script'
     required: true
     default: 'debug'
 runs:
   using: 'docker'
   image: 'Dockerfile'
   env:
-    BUILDBEN_VERSION: ${{ inputs.buildben-version }}
+    DB_VERSION: ${{ inputs.db-version }}
+    DB_SOURCES_BASE_PATH: ${{ inputs.db-sources-base-path }}

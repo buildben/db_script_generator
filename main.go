@@ -8,10 +8,12 @@ import (
 	"github.com/sirupsen/logrus"
 	"os"
 	"path"
+	"path/filepath"
 )
 
 const (
-	versionEnv            = "BUILDBEN_VERSION"
+	versionEnv            = "DB_VERSION"
+	basePathEnv           = "DB_SOURCES_BASE_PATH"
 	indexFileName         = "index.json"
 	initFolderPathPart    = "init"
 	schemasFolderPathPart = "schemas"
@@ -26,12 +28,8 @@ var (
 func main() {
 	outFileName := ""
 	outFileFlag := parseFlags()
-	wd, err := os.Getwd()
-	if err != nil {
-		logrus.Panic(err)
-	}
-
-	indexFileBytes, err := os.ReadFile(path.Join(wd, indexFileName))
+	basePath := os.Getenv(basePathEnv)
+	indexFileBytes, err := os.ReadFile(path.Join(basePath, indexFileName))
 	if err != nil {
 		logrus.Panic(err)
 	}
@@ -55,7 +53,7 @@ func main() {
 		outFileName = scriptVersion + defaultFileSuffix
 	}
 
-	f, err := os.Create(outFileName)
+	f, err := os.Create(filepath.Join(basePath, outFileName))
 	if err != nil {
 		logrus.Panic(err)
 	}
@@ -63,7 +61,7 @@ func main() {
 	defer utils.CloseFile(f)
 
 	for i := range indexStruct.Init {
-		err = utils.FileAppendToFile(f, path.Join(wd, initFolderPathPart, indexStruct.Init[i]))
+		err = utils.FileAppendToFile(f, path.Join(basePath, initFolderPathPart, indexStruct.Init[i]))
 		if err != nil {
 			logrus.Panic(err)
 		}
