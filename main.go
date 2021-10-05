@@ -9,17 +9,15 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"strings"
 )
 
 const (
-	githubRefEnv          = "GITHUB_REF"
 	versionEnv            = "DB_VERSION"
 	basePathEnv           = "DB_SOURCES_BASE_PATH"
 	indexFileName         = "index.json"
 	initFolderPathPart    = "init"
 	schemasFolderPathPart = "schemas"
-	defaultFileSuffix     = "_initial.sql"
+	defaultFileSuffix     = "initial_script.sql"
 )
 
 var (
@@ -44,8 +42,7 @@ func main() {
 
 	versionFromEnv := os.Getenv(versionEnv)
 	if len(versionFromEnv) == 0 {
-		refParts := strings.Split(os.Getenv(githubRefEnv), "/")
-		scriptVersion = refParts[len(refParts)-1]
+		scriptVersion = indexStruct.Version
 	} else {
 		scriptVersion = versionFromEnv
 	}
