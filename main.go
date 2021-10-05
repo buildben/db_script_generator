@@ -41,9 +41,7 @@ func main() {
 	}
 
 	versionFromEnv := os.Getenv(versionEnv)
-	if len(versionFromEnv) == 0 {
-		scriptVersion = indexStruct.Version
-	} else {
+	if len(versionFromEnv) != 0 {
 		scriptVersion = versionFromEnv
 	}
 
