@@ -7,7 +7,7 @@ import (
 const outFlag = "path to output file (by default init_script.sql)"
 
 func parseFlags() string {
-	out := flag.String("o", "", outFlag)
+	out := flag.String("output-file-name", "", outFlag)
 	flag.Parse()
 
 	return *out
