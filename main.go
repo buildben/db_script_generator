@@ -8,26 +8,22 @@ import (
 	"github.com/sirupsen/logrus"
 	"os"
 	"path"
-	"path/filepath"
 )
 
 const (
-	versionEnv            = "DB_VERSION"
 	basePathEnv           = "DB_SOURCES_BASE_PATH"
 	indexFileName         = "index.json"
 	initFolderPathPart    = "init"
 	schemasFolderPathPart = "schemas"
-	defaultFileSuffix     = "initial_script.sql"
+	outputFileName        = "initial_script.sql"
 )
 
 var (
 	orderArray    = []string{"types", "tables", "data", "views", "routines"}
-	scriptVersion string
+	scriptVersion int64
 )
 
 func main() {
-	outFileName := ""
-	outFileFlag := parseFlags()
 	basePath := os.Getenv(basePathEnv)
 	indexFileBytes, err := os.ReadFile(path.Join(basePath, indexFileName))
 	if err != nil {
@@ -40,18 +36,8 @@ func main() {
 		logrus.Panic(err)
 	}
 
-	versionFromEnv := os.Getenv(versionEnv)
-	if len(versionFromEnv) != 0 {
-		scriptVersion = versionFromEnv
-	}
-
-	if len(outFileFlag) > 0 {
-		outFileName = outFileFlag
-	} else {
-		outFileName = scriptVersion + defaultFileSuffix
-	}
-
-	f, err := os.Create(filepath.Join(basePath, outFileName))
+	scriptVersion = indexStruct.Version
+	f, err := os.Create(outputFileName)
 	if err != nil {
 		logrus.Panic(err)
 	}
